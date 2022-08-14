@@ -1,0 +1,52 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+
+    "use_azure_cli_auth": true,
+
+    "managed_image_resource_group_name": "os-images",
+    "managed_image_name": "squid",
+
+    "os_type": "Linux",
+    "image_publisher": "Canonical",
+    "image_offer": "UbuntuServer",
+    "image_sku": "18.04-LTS",
+
+    "azure_tags": {
+      "tech": "squid proxy"
+    },
+
+    "location": "West Europe",
+    "vm_size": "Standard_DS2_v2",
+
+    "shared_image_gallery_destination": {
+      "subscription": "d48c850e-e7a3-4bb3-ba77-1607e0175732",
+      "resource_group": "ImageGallery",
+      "gallery_name": "ImageGallery",
+
+      "image_name": "squid-proxy",
+      "image_version": "1.0.0",
+
+      "replication_regions": ["WestEurope"],
+      "storage_account_type": "Standard_LRS"
+    }
+
+  }],
+
+  "provisioners": [{
+    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+    "inline": [
+      "set -e",
+      "apt update",
+      "apt upgrade -y",
+      "apt install -y squid",
+      "systemctl stop squid",
+      "systemctl disable squid",
+
+      "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+    ],
+    "inline_shebang": "/bin/sh -x",
+    "type": "shell",
+    "valid_exit_codes": [0]
+  }]
+}
