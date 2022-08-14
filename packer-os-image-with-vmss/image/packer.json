@@ -4,7 +4,7 @@
 
     "use_azure_cli_auth": true,
 
-    "managed_image_resource_group_name": "os-images",
+    "managed_image_resource_group_name": "ImageGallery",
     "managed_image_name": "squid",
 
     "os_type": "Linux",
